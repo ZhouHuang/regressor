@@ -71,13 +71,8 @@ void Regress::calc(StatsOption option) {
 
     auto V = m_svd.matrixV(); // 获取V矩阵（左奇异向量矩阵）  
     auto vec_S = m_svd.singularValues(); // 获取S奇异值向量
+    auto S = vec_S.asDiagonal();
     auto U = m_svd.matrixU(); // 获取U矩阵（右奇异向量矩阵）  
-
-    Eigen::MatrixXd S(vec_S.size(), vec_S.size());  
-    // 将v1中的元素设置到主对角线上  
-    S.triangularView<Eigen::Lower>().setZero();  
-    S.triangularView<Eigen::Upper>().setZero();  
-    S.diagonal().segment(0, vec_S.size()) = vec_S;  
 
     Eigen::VectorXd beta = (V * S.inverse()) * U.transpose() * matY; // 求解回归系数 
 
