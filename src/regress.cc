@@ -59,11 +59,13 @@ void Regress::calc(StatsOption option) {
         m_X_filtered.push_back(m_X.at(i));
     }
 
-    Eigen::Map<Eigen::MatrixXd> matX(m_X_filtered.data(), m_nobs_valid, m_ncols);  
+    Eigen::Map<Eigen::MatrixXd> mapX(m_X_filtered.data(), m_nobs_valid, m_ncols);  
+    Eigen::MatrixXd matX(mapX);
     std::cout << "X : \n";
     std::cout << matX << '\n';
     
-    Eigen::Map<Eigen::VectorXd> matY(m_y_filtered.data(), m_nobs_valid, 1);
+    Eigen::Map<Eigen::VectorXd> mapY(m_y_filtered.data(), m_nobs_valid, 1);
+    Eigen::MatrixXd matY(mapY);
     std::cout << "Y : \n";
     std::cout << matY << '\n';
 
@@ -80,7 +82,14 @@ void Regress::calc(StatsOption option) {
     std::cout << beta << '\n';
 
     if (kComputeR2 == option) {
+        double RSS = (matY - matX * beta).squaredNorm();
+        // 计算总平方和（TSS）
+        double mean_Y = matY.mean();
 
+        double TSS = (matY - Eigen::VectorXd::Constant(matY.size(), 1, mean_Y)).squaredNorm();
+        // 计算R2值
+        m_res.r2 = 1 - RSS / TSS;
+        std::cout << " r2 : " << m_res.r2 << '\n';
     }
 
     // 将回归系数存入m_res对象的beta成员变量中  

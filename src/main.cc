@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
     regressro_mod.set_x(0, x0.begin(), x0.end());
     regressro_mod.set_x(1, x1.begin(), x1.end());
-    auto result = regressro_mod.solve(y.begin(), y.end(), 1);
+    auto result = regressro_mod.solve(y.begin(), y.end(), 2);
     auto b0 = result.beta.at(0);
     auto b1 = result.beta.at(1);
     auto res_nobs = result.nobs;
