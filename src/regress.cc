@@ -97,7 +97,12 @@ void Regress::calc(StatsOption option) {
         m_res.beta[i] = beta[i];
     }
     if (kComputeT == option) {
-
+        // 计算t值  
+        auto sqrt_S = vec_S.cwiseSqrt().eval();
+        for(int i = 0; i<m_ncols; ++i) {
+            m_res.tstats[i] = beta[i] / sqrt_S[i];
+            std::cout << " i : " << i << " tstat : " << m_res.tstats[i] << '\n';
+        }
     }
     
  }
