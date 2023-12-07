@@ -67,7 +67,7 @@ void Regress::calc(StatsOption option) {
     std::cout << "Y : \n";
     std::cout << matY << '\n';
 
-    m_svd = matX.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV);
+    m_svd.compute(matX);
 
     auto V = m_svd.matrixV(); // 获取V矩阵（左奇异向量矩阵）  
     auto vec_S = m_svd.singularValues(); // 获取S奇异值向量

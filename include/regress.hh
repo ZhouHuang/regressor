@@ -65,5 +65,5 @@ private:
     bool m_x_chg{false};
     bool m_solved{false};
     bool m_svd_reset{false};
-    Eigen::BDCSVD<Eigen::MatrixXd> m_svd;
+    Eigen::BDCSVD<Eigen::MatrixXd, Eigen::ComputeThinU | Eigen::ComputeThinV> m_svd;
 };
