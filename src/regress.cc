@@ -81,27 +81,26 @@ void Regress::calc(StatsOption option) {
     std::cout << "beta : \n";
     std::cout << beta << '\n';
 
-    if (kComputeR2 == option) {
-        double RSS = (matY - matX * beta).squaredNorm();
-        // 计算总平方和（TSS）
-        double mean_Y = matY.mean();
-
-        double TSS = (matY - Eigen::VectorXd::Constant(matY.size(), 1, mean_Y)).squaredNorm();
-        // 计算R2值
-        m_res.r2 = 1 - RSS / TSS;
-        std::cout << " r2 : " << m_res.r2 << '\n';
-    }
-
     // 将回归系数存入m_res对象的beta成员变量中  
     for(int i = 0; i<m_ncols; ++i) {
         m_res.beta[i] = beta[i];
     }
-    if (kComputeT == option) {
+    if (1 <= option) {
         // 计算t值  
         auto sqrt_S = vec_S.cwiseSqrt().eval();
         for(int i = 0; i<m_ncols; ++i) {
             m_res.tstats[i] = beta[i] / sqrt_S[i];
-            std::cout << " i : " << i << " tstat : " << m_res.tstats[i] << '\n';
+            std::cout << " i : " << i << " t-value " << m_res.tstats[i] << '\n';
+        }
+        if (2 <= option) {
+            double RSS = (matY - matX * beta).squaredNorm();
+            // 计算总平方和（TSS）
+            double mean_Y = matY.mean();
+
+            double TSS = (matY - Eigen::VectorXd::Constant(matY.size(), 1, mean_Y)).squaredNorm();
+            // 计算R2值
+            m_res.r2 = 1 - RSS / TSS;
+            std::cout << " r2 " << m_res.r2 << '\n';
         }
     }
     
