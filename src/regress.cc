@@ -70,13 +70,38 @@ void Regress::calc(StatsOption option) {
     std::cout << matY << '\n';
 
     m_svd.compute(matX);
+    Eigen::VectorXd beta;
 
-    auto V = m_svd.matrixV(); // 获取V矩阵（左奇异向量矩阵）  
     auto vec_S = m_svd.singularValues(); // 获取S奇异值向量
-    auto S = vec_S.asDiagonal();
-    auto U = m_svd.matrixU(); // 获取U矩阵（右奇异向量矩阵）  
+    if (vec_S.count() < vec_S.size()) {
+        std::cout << " not full rank ...\n";
+        // 不满秩
+        // 计算X的转置矩阵
+        Eigen::MatrixXd X_transpose = matX.transpose();
 
-    Eigen::VectorXd beta = (V * S.inverse()) * U.transpose() * matY; // 求解回归系数 
+        // 计算X的伪逆矩阵
+        Eigen::MatrixXd X_pseudo_inverse = (X_transpose * matX).ldlt().solve(X_transpose);
+
+        // 计算回归系数beta
+        beta = X_pseudo_inverse * matY;
+
+    } else {
+        std::cout << " full rank ...\n";
+
+        auto V = m_svd.matrixV(); // 获取V矩阵（左奇异向量矩阵）  
+        auto S = vec_S.asDiagonal();
+        auto U = m_svd.matrixU(); // 获取U矩阵（右奇异向量矩阵）  
+
+        beta = (V * S.inverse()) * U.transpose() * matY; // 求解回归系数 
+
+        std::cout << " V : \n" << V << '\n';
+        std::cout << " S : \n" << S << '\n';
+        std::cout << " U : \n" << U << '\n';
+        std::cout << " V*(S^-1) : \n" << (V * S.inverse()) << '\n';
+        std::cout << " V*(S^-1) * (U^T) : \n" << (V * S.inverse()) * U.transpose() << '\n';
+
+    }
+
 
     std::cout << "beta : \n";
     std::cout << beta << '\n';
